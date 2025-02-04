@@ -178,39 +178,4 @@ ROLLBACK TO discount_applied;
 COMMIT;
 
 
---Access Level for Admin
--U daria_admin -d easy_travel_database
---password 123
--- Admin have access to all commands of all tables
---View all bookings
-SELECT * FROM Booking;
--- Add a new flight
-INSERT INTO Flight (airline_name, departure_location, arrival_location, departure_date_time, seat_capacity, price_per_seat, optional_services)
-VALUES ('New Airline', 'Paris', 'Berlin', '2025-03-10 10:30:00', 180, 250.00, 'WiFi Access');
--- Update customer information
-UPDATE Customer SET email = 'newemail@example.com' WHERE customer_id = 5;
--- Delete an accommodation
-DELETE FROM Accommodation WHERE accommodation_id = 10;
 
-
--- Access Level for Travel Agent
--U bill_agent -d easy_travel_database
---password 456
---Agent can do all on Booking and SELECT from Flight, Accommodation, Transfer
-SELECT * FROM Flight;
-SELECT * FROM Feedback;
---ERROR:  permission denied for table feedback
-UPDATE Booking SET seat_class = 'First Class' WHERE booking_id = 9;
-UPDATE Flight SET price_per_seat = 300.00 WHERE flight_id = 5;
---ERROR:  permission denied for table flight
-
---Access Level for Customer
-psql -U anna_customer -d easy_travel_database
---password 789
---Customer can SELECT from Customer, Booking, Feedback, LoyaltyProgram
-SELECT * FROM Customer WHERE customer_id = 3;
-SELECT * FROM Booking WHERE customer_id = 3;
-SELECT * FROM Loyalty_Program WHERE customer_id = 3;
-INSERT INTO Booking (customer_id, agent_id, flight_id, accommodation_id, transfer_id, number_of_days, seat_class, points_earned, booking_date, total_price, payment_id)
-VALUES (3, NULL, 5, 8, NULL, 3, 'Economy', 90, '2025-02-20', 900.00, 15);
---permission denied for table booking
